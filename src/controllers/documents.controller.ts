@@ -1,50 +1,49 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { DocumentsService } from '../services/documents.service';
-import { CreateDocumentDto, UpdateDocumentDto } from '../dtos/document.dto';
+import { Controller, Post, Get, Param, Delete, Put, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { DocumentsService } from '../services/documents.service';
 
 @Controller('documents')
 export class DocumentsController {
-    constructor(private readonly documentsService: DocumentsService) { }
-    @Post()
-    @UseInterceptors(FileInterceptor('file', {
-        storage: diskStorage({
-            destination: './uploads',
-            filename: (req, file, callback) => {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-                callback(null, file.fieldname + '-' + uniqueSuffix + extname(file.originalname));
-            }
-        })
-    }))
-    
-    uploadFile(@UploadedFile() file: Express.Multer.File) { 
-        console.log('Uploaded File:', file);
-        return { message: 'File uploaded successfully!', filePath: file.path };
-    }
+  constructor(private readonly documentsService: DocumentsService) {}
 
-    async create(@Body() createDocumentDto: CreateDocumentDto, @UploadedFile() file: Express.Multer.File) {
-        return this.documentsService.create(createDocumentDto, file.path);
-    }
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './uploads',
+      filename: (req, file, callback) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        callback(null, file.fieldname + '-' + uniqueSuffix + extname(file.originalname));
+      }
+    })
+  }))
+  async uploadFile(@UploadedFile() file: Express.Multer.File, @Body('name') name: string, @Body('description') description: string) {
+    console.log(file);
+    if (!file) {
+        throw new Error('File is undefined! Check Postman request.');
+      }
+    const fileUrl = `/uploads/${file.filename}`;
+    return this.documentsService.createDocument(name, description, fileUrl);
+  }
 
-    @Get()
-    async findAll() {
-        return this.documentsService.findAll();
-    }
+  @Get()
+  getAllDocuments() {
+    return this.documentsService.getAllDocuments();
+  }
 
-    @Get(':id')
-    async findOne(@Param('id') id: string) {
-        return this.documentsService.findOne(id);
-    }
+  @Get(':id')
+  getDocumentById(@Param('id') id: string) {
+    return this.documentsService.getDocumentById(id);
+  }
 
-    @Patch(':id')
-    async update(@Param('id') id: string, @Body() updateDocumentDto: UpdateDocumentDto) {
-        return this.documentsService.update(id, updateDocumentDto);
-    }
+  @Put(':id')
+  updateDocument(@Param('id') id: string, @Body() body: { name?: string; description?: string }) {
+    return this.documentsService.updateDocument(id, body.name, body.description);
+  }
 
-    @Delete(':id')
-    async remove(@Param('id') id: string) {
-        return this.documentsService.remove(id);
-    }
+  @Delete(':id')
+  deleteDocument(@Param('id') id: string) {
+    return this.documentsService.deleteDocument(id);
+  }
 }

@@ -1,21 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document as MongooseDocument } from 'mongoose';
+import { Document } from 'mongoose';
 
-export type DocumentDocument = Document & MongooseDocument;
+export type DocumentDocument = DocumentModel & Document;
 
 @Schema({ timestamps: true })
-export class Document {
+export class DocumentModel {
   @Prop({ required: true })
-  title: string;
+  name: string;
 
-  @Prop({ required: true })
+  @Prop()
   description: string;
 
   @Prop({ required: true })
-  filePath: string; // Path where the file is stored
-
-  @Prop({ default: 'pending' })
-  status: 'pending' | 'approved' | 'rejected';
+  fileUrl: string;
 }
 
-export const DocumentSchema = SchemaFactory.createForClass(Document);
+export const DocumentSchema = SchemaFactory.createForClass(DocumentModel);
