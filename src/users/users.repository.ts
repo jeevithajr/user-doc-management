@@ -25,8 +25,8 @@ export class UserRepository {
     return this.userModel.findByIdAndUpdate(id, { role }, { new: true }).exec();
   }
 
-  async deleteUser(id: string): Promise<void> {
-    await this.userModel.findByIdAndDelete(id).exec();
+  async deleteUser(id: string): Promise<any> {
+    return await this.userModel.findByIdAndDelete(id).exec();
   }
 
   async getAllUsers(): Promise<User[]> {

@@ -22,6 +22,10 @@ export class UsersService {
     return this.userRepository.updateUserRole(id, role);
   }
 
+  deleteUser(id: string): Promise<User | null> {
+    return this.userRepository.deleteUser(id);
+  }
+
   async getAllUsers(): Promise<User[]> {
     return this.userRepository.getAllUsers() 
   }
