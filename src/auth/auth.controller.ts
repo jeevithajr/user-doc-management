@@ -3,11 +3,11 @@ import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { UserRole } from '../users/user.entity';
 
-@Controller('auth') // Base route: /auth
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService, private usersService: UsersService) {}
 
-  @Post('register') // New endpoint: /auth/register
+  @Post('register') 
   async registerUser(
     @Body() body: { username: string; password: string; role: UserRole }
   ) {

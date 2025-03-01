@@ -10,14 +10,6 @@ import { UserRole } from './user.entity';
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
 
-    //  Register a new user (Admin only)
-    @Post('register')
-    async registerUser(
-        @Body() body: { username: string; password: string; role: UserRole }
-    ): Promise<User> {
-        return this.usersService.createUser(body.username, body.password, body.role);
-    }
-
     //  Get user by username
     @Get('username/:username')
     async getUserByUsername(@Param('username') username: string): Promise<User | null> {
@@ -38,8 +30,8 @@ export class UsersController {
 
     @Put(':id/role')
     @Roles(UserRole.ADMIN) 
-    updateUserRole(@Param('id') id: string, @Body() updateRoleDto: { role: UserRole }) {
-        return this.usersService.updateUserRole(id, updateRoleDto.role);
+    updateUserRole(@Param('id') id: number, @Body() updateRoleDto: { role: UserRole }) {
+        return this.usersService.updateUserRole(id.toString(), updateRoleDto.role);
     }
 
 }

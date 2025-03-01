@@ -10,9 +10,8 @@ export class RolesGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const requiredRole = this.reflector.get<UserRole>('role', context.getHandler());
     if (!requiredRole) return true; // Allow if no role is specified.
-
     const request = context.switchToHttp().getRequest<Request>();
-    const user = request.body;
+    const user = request.user;
     if (!user || user.role !== requiredRole) {
       throw new ForbiddenException('Access Denied: Admins Only');
     }
