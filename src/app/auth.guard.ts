@@ -1,8 +1,12 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { UserRole } from '../users/user.entity';
 
+interface JwtPayload {
+  id: string;
+  username: string;
+  role: 'admin' | 'editor' | 'viewer';
+}
 @Injectable()
 export class AuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
@@ -12,14 +16,8 @@ export class AuthGuard implements CanActivate {
     if (!token) throw new UnauthorizedException('No token provided');
 
     try {
-      const decodedUser = jwt.verify(token, 'your-secret-key') as { id: string; username: string; role: string };
-
-      //  Cast role to UserRole Enum
-      request.user = {
-        id: decodedUser.id,
-        username: decodedUser.username,
-        role: decodedUser.role as UserRole, 
-      };
+      const decodedUser = jwt.verify(token, 'your-secret-key') as JwtPayload;
+      request.user = decodedUser;
 
       return true;
     } catch {
