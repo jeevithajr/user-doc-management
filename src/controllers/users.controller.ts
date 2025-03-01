@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Param, Body, UseGuards, Put, Delete } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { User} from './user.schema';
+import { UsersService } from '../services/users.service';
+import { User} from '../schemas/user.schema';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { UserRole } from './user.entity';
+import { UserRole } from '../entities/user.entity';
 
 @Controller('users') // Base route: /users
 @UseGuards(RolesGuard)

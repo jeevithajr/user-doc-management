@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, Delete, Patch, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { DocumentsService } from '../documents/documents.service';
-import { CreateDocumentDto, UpdateDocumentDto } from '../documents/document.dto';
+import { DocumentsService } from '../services/documents.service';
+import { CreateDocumentDto, UpdateDocumentDto } from '../dtos/document.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
