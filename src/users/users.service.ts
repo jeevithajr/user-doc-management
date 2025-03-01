@@ -1,32 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User, UserRole } from './user.entity';
-import * as bcrypt from 'bcrypt';
+import { UserRepository } from './users.repository';
+import { User } from './user.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(User) private usersRepository: Repository<User>
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
-  async createUser(username: string, password: string, role: UserRole): Promise<User> {
-    const existingUser = await this.usersRepository.findOne({ where: { username } });
-    if (existingUser) {
-      throw new Error('User already exists');
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = this.usersRepository.create({ username, password: hashedPassword, role });
-
-    return this.usersRepository.save(newUser);
+  createUser(username: string, password: string, role: string): Promise<User> {
+    return this.userRepository.createUser(username, password, role);
   }
 
-  async findUserByUsername(username: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { username } });
+  findByUsername(username: string): Promise<User | null> {
+    return this.userRepository.findByUsername(username);
   }
 
-  async findUserById(id: number): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { id } });
+  findById(id: string): Promise<User | null> {
+    return this.userRepository.findById(id);
+  }
+
+  updateUserRole(id: string, role: string): Promise<User | null> {
+    return this.userRepository.updateUserRole(id, role);
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return this.userRepository.getAllUsers() 
   }
 }
